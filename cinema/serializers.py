@@ -1,5 +1,6 @@
 from django.db import transaction
 from rest_framework import serializers
+from django.contrib.auth import authenticate
 
 from cinema.models import (
     Genre,
@@ -135,3 +136,43 @@ class OrderSerializer(serializers.ModelSerializer):
 
 class OrderListSerializer(OrderSerializer):
     tickets = TicketListSerializer(many=True, read_only=True)
+
+
+class MovieImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Movie
+        fields = ['id', 'image']
+
+
+class MovieSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField(source='image.url', read_only=True)
+
+    class Meta:
+        model = Movie
+        fields = ['id', 'title', 'description', 'duration', 'image']
+
+
+class MovieSessionSerializer(serializers.ModelSerializer):
+    movie_image = serializers.ImageField(source='movie.image.url', read_only=True)
+
+    class Meta:
+        model = MovieSession
+        fields = ['id', 'movie', 'movie_image', 'session_time', 'available_seats']
+
+
+class CustomAuthTokenSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(trim_whitespace=False)
+
+    def validate(self, data):
+        email = data.get('email')
+        password = data.get('password')
+
+        if email and password:
+            user = authenticate(request=self.context.get('request'), email=email, password=password)
+            if user is None:
+                raise serializers.ValidationError('Unable to log in with provided credentials', code='authorization')
+        else:
+            raise serializers.ValidationError('Must include "email" and "password".')
+        data['user'] = user
+        return data
