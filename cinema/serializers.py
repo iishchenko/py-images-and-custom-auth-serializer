@@ -141,23 +141,23 @@ class OrderListSerializer(OrderSerializer):
 class MovieImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Movie
-        fields = ['id', 'image']
+        fields = ["id", "image"]
 
 
 class MovieSerializer(serializers.ModelSerializer):
-    image = serializers.ImageField(source='image.url', read_only=True)
+    image = serializers.ImageField(source="image.url", read_only=True)
 
     class Meta:
         model = Movie
-        fields = ['id', 'title', 'description', 'duration', 'image']
+        fields = ["id", "title", "description", "duration", "image"]
 
 
 class MovieSessionSerializer(serializers.ModelSerializer):
-    movie_image = serializers.ImageField(source='movie.image.url', read_only=True)
+    movie_image = serializers.ImageField(source="movie.image.url", read_only=True)
 
     class Meta:
         model = MovieSession
-        fields = ['id', 'movie', 'movie_image', 'session_time', 'available_seats']
+        fields = ["id", "movie", "movie_image", "session_time", "available_seats"]
 
 
 class CustomAuthTokenSerializer(serializers.Serializer):
@@ -165,14 +165,20 @@ class CustomAuthTokenSerializer(serializers.Serializer):
     password = serializers.CharField(trim_whitespace=False)
 
     def validate(self, data):
-        email = data.get('email')
-        password = data.get('password')
+        email = data.get("email")
+        password = data.get("password")
 
         if email and password:
-            user = authenticate(request=self.context.get('request'), email=email, password=password)
+            user = authenticate(
+                request=self.context.get("request"),
+                email=email,
+                password=password
+            )
             if user is None:
-                raise serializers.ValidationError('Unable to log in with provided credentials', code='authorization')
+                raise serializers.ValidationError(
+                    "Unable to log in with provided credentials",
+                    code="authorization")
         else:
-            raise serializers.ValidationError('Must include "email" and "password".')
-        data['user'] = user
+            raise serializers.ValidationError("""Must include "email" and "password".""")
+        data["user"] = user
         return data
