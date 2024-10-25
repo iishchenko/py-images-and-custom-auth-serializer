@@ -58,7 +58,10 @@ class MovieDetailSerializer(MovieSerializer):
 
 
 class MovieSessionSerializer(serializers.ModelSerializer):
-    movie_image = serializers.ImageField(source="movie.image.url", read_only=True)
+    movie_image = serializers.ImageField(
+        source="movie.image.url",
+        read_only=True
+    )
 
     class Meta:
         model = MovieSession
@@ -169,6 +172,8 @@ class CustomAuthTokenSerializer(serializers.Serializer):
                     "Unable to log in with provided credentials",
                     code="authorization")
         else:
-            raise serializers.ValidationError("""Must include "email" and "password".""")
+            raise serializers.ValidationError(
+                """Must include "email" and "password"."""
+            )
         data["user"] = user
         return data
