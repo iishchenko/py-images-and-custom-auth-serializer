@@ -62,7 +62,7 @@ class MovieSessionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MovieSession
-        fields = ["id", "movie", "movie_image", "session_time", "available_seats"]
+        fields = ["id", "movie", "movie_image", "show_time", "available_seats"]
 
 
 class MovieSessionListSerializer(MovieSessionSerializer):
@@ -143,6 +143,8 @@ class OrderListSerializer(OrderSerializer):
 
 
 class MovieImageSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField()
+
     class Meta:
         model = Movie
         fields = ["id", "image"]
