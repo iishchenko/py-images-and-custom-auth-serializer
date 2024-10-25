@@ -32,9 +32,11 @@ class CinemaHallSerializer(serializers.ModelSerializer):
 
 
 class MovieSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField(source="image.url", read_only=True)
+
     class Meta:
         model = Movie
-        fields = ("id", "title", "description", "duration", "genres", "actors")
+        fields = ["id", "title", "description", "duration", "image"]
 
 
 class MovieListSerializer(MovieSerializer):
@@ -56,9 +58,11 @@ class MovieDetailSerializer(MovieSerializer):
 
 
 class MovieSessionSerializer(serializers.ModelSerializer):
+    movie_image = serializers.ImageField(source="movie.image.url", read_only=True)
+
     class Meta:
         model = MovieSession
-        fields = ("id", "show_time", "movie", "cinema_hall")
+        fields = ["id", "movie", "movie_image", "session_time", "available_seats"]
 
 
 class MovieSessionListSerializer(MovieSessionSerializer):
@@ -142,22 +146,6 @@ class MovieImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Movie
         fields = ["id", "image"]
-
-
-class MovieSerializer(serializers.ModelSerializer):
-    image = serializers.ImageField(source="image.url", read_only=True)
-
-    class Meta:
-        model = Movie
-        fields = ["id", "title", "description", "duration", "image"]
-
-
-class MovieSessionSerializer(serializers.ModelSerializer):
-    movie_image = serializers.ImageField(source="movie.image.url", read_only=True)
-
-    class Meta:
-        model = MovieSession
-        fields = ["id", "movie", "movie_image", "session_time", "available_seats"]
 
 
 class CustomAuthTokenSerializer(serializers.Serializer):
